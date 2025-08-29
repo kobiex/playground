@@ -2,20 +2,22 @@ package main
 
 import (
 	"database/sql"
+
+	"github.com/bitkobie/todos/model"
 )
 
 type TodoRepo struct {
 	db *sql.DB
 }
 
-func NewTodoRepo(db *sql.DB) TodoStore {
+func NewTodoRepo(db *sql.DB) model.TodoRepository {
 	return &TodoRepo{
 		db: db,
 	}
 }
 
 // Create implements TodoStore.
-func (t *TodoRepo) Create(todo *Todo) error {
+func (t *TodoRepo) Create(todo *model.Todo) error {
 	query := `INSERT INTO todos (title, complete) VALUES (NULLIF(?,''), ?)`
 
 	result, err := t.db.Exec(query, todo.Title, todo.Complete)
@@ -34,7 +36,7 @@ func (t *TodoRepo) Create(todo *Todo) error {
 }
 
 // Update implements TodoStore.
-func (t *TodoRepo) Update(todo *Todo) error {
+func (t *TodoRepo) Update(todo *model.Todo) error {
 	query := `UPDATE todos SET title = NULLIF(?,''), complete = ? WHERE id = ?`
 
 	result, err := t.db.Exec(query, todo.Title, todo.Complete, todo.Id)
@@ -50,29 +52,29 @@ func (t *TodoRepo) Update(todo *Todo) error {
 }
 
 // Get implements TodoStore.
-func (t *TodoRepo) GetAll() ([]Todo, error) {
-		query := `SELECT id, title, complete FROM todos`
+func (t *TodoRepo) GetAll() ([]model.Todo, error) {
+	query := `SELECT id, title, complete FROM todos`
 
-		rows, err := t.db.Query(query)
-		if err != nil {
+	rows, err := t.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var todos []model.Todo
+	for rows.Next() {
+		var todo model.Todo
+		if err := rows.Scan(&todo.Id, &todo.Title, &todo.Complete); err != nil {
 			return nil, err
 		}
-		defer rows.Close()
+		todos = append(todos, todo)
+	}
 
-		var todos []Todo
-		for rows.Next() {
-			var todo Todo
-			if err := rows.Scan(&todo.Id, &todo.Title, &todo.Complete); err != nil {
-				return nil, err
-			}
-			todos = append(todos, todo)
-		}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
-		if err := rows.Err(); err != nil {
-			return nil, err
-		}
-
-		return todos, nil
+	return todos, nil
 
 }
 

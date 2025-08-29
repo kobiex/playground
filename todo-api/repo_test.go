@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"slices"
 	"testing"
+
+	"github.com/bitkobie/todos/model"
 )
 
 func setupTestDB(t *testing.T) *sql.DB {
@@ -22,22 +24,22 @@ func setupTestDB(t *testing.T) *sql.DB {
 func TestCreate(t *testing.T) {
 	testCases := []struct {
 		name    string
-		todo    *Todo
+		todo    *model.Todo
 		wantErr bool
 	}{
 		{
 			name:    "valid todo",
-			todo:    &Todo{Title: "Run this test", Complete: false},
+			todo:    &model.Todo{Title: "Run this test", Complete: false},
 			wantErr: false,
 		},
 		{
 			name:    "invalid todo: missing required field",
-			todo:    &Todo{Complete: false, Title: ""},
+			todo:    &model.Todo{Complete: false, Title: ""},
 			wantErr: true,
 		},
 		{
 			name:    "valid todo: missing optional field",
-			todo:    &Todo{Title: "leave status out"},
+			todo:    &model.Todo{Title: "leave status out"},
 			wantErr: false,
 		},
 	}
@@ -59,7 +61,7 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	repo := NewTodoRepo(setupTestDB(t))
-	todo := &Todo{Title: "Initial Title", Complete: false}
+	todo := &model.Todo{Title: "Initial Title", Complete: false}
 	err := repo.Create(todo)
 	if err != nil {
 		t.Fatalf("failed to create initial todo: %v", err)
@@ -67,22 +69,22 @@ func TestUpdate(t *testing.T) {
 
 	testCases := []struct {
 		name    string
-		todo    *Todo
+		todo    *model.Todo
 		wantErr bool
 	}{
 		{
 			name:    "valid todo",
-			todo:    &Todo{Id: todo.Id, Title: "Run this test", Complete: true},
+			todo:    &model.Todo{Id: todo.Id, Title: "Run this test", Complete: true},
 			wantErr: false,
 		},
 		{
 			name:    "invalid todo: missing required field",
-			todo:    &Todo{Id: todo.Id, Complete: false, Title: ""},
+			todo:    &model.Todo{Id: todo.Id, Complete: false, Title: ""},
 			wantErr: true,
 		},
 		{
 			name:    "invalid todo: invalid id",
-			todo:    &Todo{Id: -98, Title: "leave status out"},
+			todo:    &model.Todo{Id: -98, Title: "leave status out"},
 			wantErr: true,
 		},
 	}
@@ -102,9 +104,9 @@ func TestUpdate(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	repo := NewTodoRepo(setupTestDB(t))
-	newtodos := []*Todo{&Todo{Title: "First Todo", Complete: false},
-		&Todo{Title: "Second Todo", Complete: true},
-		&Todo{Title: "Third Todo", Complete: false},
+	newtodos := []*model.Todo{{Title: "First Todo", Complete: false},
+		{Title: "Second Todo", Complete: true},
+		{Title: "Third Todo", Complete: false},
 	}
 	for _, todo := range newtodos {
 		err := repo.Create(todo)
@@ -129,7 +131,7 @@ func TestGetAll(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	repo := NewTodoRepo(setupTestDB(t))
-	todo := &Todo{Title: "Todo to be deleted", Complete: false}
+	todo := &model.Todo{Title: "Todo to be deleted", Complete: false}
 	err := repo.Create(todo)
 	if err != nil {
 		t.Fatalf("failed to create todo: %v", err)
