@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bitkobie/todos/model"
+	"github.com/primekobie/todos/model"
 )
 
 type Handler struct {

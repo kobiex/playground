@@ -1,4 +1,4 @@
-module github.com/bitkobie/todos
+module github.com/primekobie/todos
 
 go 1.24.3
 

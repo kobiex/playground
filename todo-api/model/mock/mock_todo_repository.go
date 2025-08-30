@@ -12,7 +12,7 @@ package mock
 import (
 	reflect "reflect"
 
-	model "github.com/bitkobie/todos/model"
+	model "github.com/primekobie/todos/model"
 	gomock "go.uber.org/mock/gomock"
 )
 

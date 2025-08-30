@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 
-	"github.com/bitkobie/todos/model"
+	"github.com/primekobie/todos/model"
 )
 
 type TodoRepo struct {

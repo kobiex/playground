@@ -5,7 +5,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/bitkobie/todos/model"
+	"github.com/primekobie/todos/model"
 )
 
 func setupTestDB(t *testing.T) *sql.DB {

@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/bitkobie/todos/model"
-	"github.com/bitkobie/todos/model/mock"
+	"github.com/primekobie/todos/model"
+	"github.com/primekobie/todos/model/mock"
 	"go.uber.org/mock/gomock"
 )
 
