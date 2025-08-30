@@ -122,12 +122,11 @@ func TestGetAll(t *testing.T) {
 
 	for _, todo := range newtodos {
 		ok := slices.Contains(todos, *todo)
-		if !ok{
+		if !ok {
 			t.Errorf("expected todo %+v to be in the list, but it was not found", *todo)
 		}
 	}
 }
-
 
 func TestDelete(t *testing.T) {
 	repo := NewTodoRepo(setupTestDB(t))

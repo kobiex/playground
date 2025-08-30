@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
+	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,9 +16,24 @@ func main() {
 	if err := initDB(db); err != nil {
 		log.Fatal(err)
 	}
-	_ = NewTodoRepo(db)
 
-	fmt.Println("Hello World")
+	repo := NewTodoRepo(db)
+	handler := NewHandler(repo)
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("POST /todos", handler.CreateTodo)
+	mux.HandleFunc("PUT /todos", handler.UpdateTodo)
+	mux.HandleFunc("GET /todos", handler.GetAllTodos)
+	mux.HandleFunc("DELETE /todos/{id}", handler.DeleteTodo)
+
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: mux,
+	}
+
+	log.Printf("server running on port %s", server.Addr)
+	log.Fatal(server.ListenAndServe())
 }
 
 func initDB(db *sql.DB) error {
